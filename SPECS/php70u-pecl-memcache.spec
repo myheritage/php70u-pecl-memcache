@@ -13,7 +13,7 @@ Summary: Extension to work with the Memcached caching daemon
 Name: %{php_base}-pecl-%{pecl_name}
 Version: 3.0.9
 %if 0%{?gh_date:1}
-Release: git%{gh_short}.1.ius%{?dist}
+Release: git%{gh_short}.1.MyHeritage.ius%{?dist}
 %else
 Release: 1.ius%{?dist}
 %endif
@@ -126,6 +126,10 @@ rm -rf %{buildroot}%{php_incldir}/ext/%{pecl_name}/
 rm -rf %{buildroot}%{php_ztsincldir}/ext/%{pecl_name}/
 %endif
 
+# Documentation
+for i in $(grep 'role="doc"' package.xml | grep 'file' | sed -e 's/^.*name="//;s/".*$//')
+do install -Dpm 644 NTS/$i %{buildroot}%{pecl_docdir}/%{pecl_name}/$i
+done
 
 %check
 # simple module load test
@@ -160,6 +164,7 @@ fi
 
 
 %files
+%doc %{pecl_docdir}/%{pecl_name}
 %{php_extdir}/%{pecl_name}.so
 %{pecl_xmldir}/%{pecl_name}.xml
 %config(noreplace) %verify(not md5 mtime size) %{php_inidir}/%{ini_name}
