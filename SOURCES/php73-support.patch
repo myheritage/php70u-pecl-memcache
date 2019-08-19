@@ -1,42 +1,39 @@
 diff -ruNp memcache.org/memcache.c memcache/memcache.c
 --- memcache.org/memcache.c	2017-02-24 21:03:57.000000000 +0900
 +++ memcache/memcache.c	2019-01-12 01:32:55.317420944 +0900
-@@ -721,11 +721,8 @@ mmc_t *mmc_find_persistent(const char *h
+@@ -721,7 +721,11 @@ mmc_t *mmc_find_persistent(const char *h
  		mmc = mmc_server_new(host, host_len, port, udp_port, 1, timeout, retry_interval);
  		le->type = le_memcache_server;
  		le->ptr  = mmc;
--#if PHP_VERSION_ID < 70300
--                GC_REFCOUNT(le) = 1;
--#else
--                GC_SET_REFCOUNT(le,1);
--#endif
-+		GC_REFCOUNT(le) = 1;
-+
++#if PHP_VERSION_ID < 70300
+ 		GC_REFCOUNT(le) = 1;
++#else
++		GC_SET_REFCOUNT(le,1);
++#endif
+
  		/* register new persistent connection */
  		if (zend_hash_str_update_mem(&EG(persistent_list), key, key_len, le, sizeof(*le)) == NULL) {
- 			mmc_server_free(mmc);
-@@ -782,11 +779,7 @@ static mmc_t *php_mmc_pool_addserver(
+@@ -779,7 +783,11 @@ static mmc_t *php_mmc_pool_addserver(
  		pool->failure_callback = &php_mmc_failure_callback;
  		list_res = zend_register_resource(pool, le_memcache_pool);
  		add_property_resource(mmc_object, "connection", list_res);
--#if PHP_VERSION_ID < 70300
++#if PHP_VERSION_ID < 70300
  		GC_REFCOUNT(list_res)++;
--#else
--		GC_ADDREF(list_res);
--#endif
++#else
++		GC_ADDREF(list_res);
++#endif
  	}
  	else {
  		pool = zend_fetch_resource_ex(connection, "connection", le_memcache_pool);
-@@ -870,11 +863,7 @@ static void php_mmc_connect(INTERNAL_FUN
+@@ -863,7 +871,11 @@ static void php_mmc_connect(INTERNAL_FUN
  		mmc_object = return_value;
  		object_init_ex(mmc_object, memcache_ce);
  		add_property_resource(mmc_object, "connection", list_res);
--f PHP_VERSION_ID < 70300
--                GC_REFCOUNT(list_res)++;
--#else
--                GC_ADDREF(list_res);
--#endif
-+		GC_REFCOUNT(list_res)++;
++#if PHP_VERSION_ID < 70300
+ 		GC_REFCOUNT(list_res)++;
++#else
++		GC_ADDREF(list_res);
++#endif
  	} else {
  		RETVAL_TRUE;
  	}
