@@ -26,6 +26,7 @@ Source0:      https://github.com/%{gh_owner}/%{gh_project}/archive/%{gh_commit}/
 Source0:      http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 %endif
 Source1: %{pecl_name}.ini
+Patch0: php73-support.patch
 URL: http://pecl.php.net/package/%{pecl_name}
 BuildRequires: pear1u
 BuildRequires: %{php_base}-devel
@@ -82,7 +83,7 @@ sed -e '/release/s/3.0.9/%{version}dev/' -i package.xml
 %else
 mv %{pecl_name}-%{version} NTS
 %endif
-
+%patch0 -p1
 
 %if %{with_zts}
 cp -r NTS ZTS
