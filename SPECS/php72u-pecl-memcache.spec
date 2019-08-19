@@ -83,7 +83,9 @@ sed -e '/release/s/3.0.9/%{version}dev/' -i package.xml
 %else
 mv %{pecl_name}-%{version} NTS
 %endif
+cd NTS/php7
 %patch0 -p1
+cd -
 
 %if %{with_zts}
 cp -r NTS ZTS
